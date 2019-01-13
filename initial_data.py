@@ -1,5 +1,2 @@
-LOGIN = #'your login'
-
-GROUP_ID = #number
-GROUP_URL = #'link to your group'
-TOKEN = #'token from your group should be here is '
+GROUP_ID = 163206931 # number
+TOKEN = 'efea1fd1635901ddae428c69a64875abb8413d8a37d210a21386d2db5cb5cb2a5b2445b1101403df58849' # string

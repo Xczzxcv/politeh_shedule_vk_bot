@@ -7,6 +7,7 @@ from politeh import *
 import datetime
 
 current_group = None
+MAX_MSG_LEN = 4096
 
 class IncorrectGroupError(Exception):
 	def __init__(self, correctness):
@@ -93,18 +94,31 @@ def use_longpoll(longpoll, vk):
 			if err_msg is None:
 				print(command_handler, current_group, argument)
 				message_text = command_handler(current_group, argument)
-				vk.messages.send(
-					user_id=event.object.from_id,
-					message=message_text,
-					random_id=event.object.random_id
-				)
+				try:
+					vk.messages.send(
+						user_id=event.object.from_id,
+						message=message_text,
+						random_id=event.object.random_id
+						)
+				except api.exceptions.ApiError as e:
+					if e.code == 914:
+						print(len(message_text))
+						for i in range(len(message_text) // MAX_MSG_LEN + 1):
+							start = i * MAX_MSG_LEN
+							end = (i + 1) * MAX_MSG_LEN
+							print('\t', len(message_text[start:end]))
+							vk.messages.send(
+								user_id=event.object.from_id,
+								message=message_text[start:end],
+								random_id=event.object.random_id
+								)
 			else:
 				# print(event)
 				vk.messages.send(
 					user_id=event.object.from_id,
 					message=err_msg,
 					random_id=event.object.random_id
-				)
+					)
 
 
 if __name__ == '__main__':
